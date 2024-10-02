@@ -1,6 +1,35 @@
 @extends('layouts.master')
 @section('title', 'View Adviser Information')
 
+@section('style')
+<style>
+:root {
+  --star-size: 20px;
+  /* --star-color: #fff; */
+  --star-color: #B2BEB5;
+  --star-background: #fc0;
+}
+
+.Stars {
+  --percent: calc(var(--rating) / 5 * 100%);
+  
+  display: inline-block;
+  font-size: var(--star-size);
+  font-family: Times; // make sure ★ appears correctly
+  line-height: 1;
+  
+  &::before {
+    content: '★★★★★';
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+
+</style>
+@endsection
 @section('content')
     <div class="content">
         <!-- Start Content-->
@@ -28,9 +57,19 @@
                                     <img src="{{asset('assets/images/users/user-11.jpg')}}" class="rounded-2 avatar-xxl" alt="image profile">
 
                                     <div class="overflow-hidden ms-4">
-                                        <h4 class="m-0 text-dark fs-20"></h4>
-                                        <p class="my-1 text-muted fs-16">{{ $adviserInfo->name }}</p>
-                                        <span class="fs-15"><i class="mdi mdi-message me-2 align-middle"></i>Speaks: <span>English <span class="badge bg-primary-subtle text-primary px-2 py-1 fs-13 fw-normal">native</span> , Spanish, Turkish </span></span>
+                                        <h4 class="m-0 text-dark fs-20">{{ $adviser->name }}</h4>
+                                        <p class="my-1 text-muted fs-16">{{ $adviser->shout_out }}</p>
+                                        <span class="fs-15"><i class="mdi mdi-message me-2 align-middle"></i>Specialties: 
+                                            @if(!is_array($adviser['specs']))
+                                                @foreach($adviser['specs'] as $specialty)
+                                                    <span>{{ $specialty['name'] }}, </span>
+                                                @endforeach
+                                            @else
+                                                Null
+                                            @endif
+                                            <br>
+                                            <div class="Stars" style="--rating: {{$adviser->avg_rating}};" aria-label="Rating of this product is 2.3 out of 5.">
+                                            {{-- <span>English <span class="badge bg-primary-subtle text-primary px-2 py-1 fs-13 fw-normal">native</span> , Spanish, Turkish </span></span> --}}
                                     </div>
                                 </div>
                             </div>
@@ -75,13 +114,13 @@
                                             <div class="">
                                                 <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">About me</h5>
                                                 <p>
-                                                    {{-- {{ $adviser->description }} --}}
+                                                    {{ $adviser->description }}
                                                 </p>
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 col-md-6 mb-4">
-                                            <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Specialties</h5>
+                                            <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Specialties Level</h5>
                                             
                                             {{-- <div class="row">
                                                 <div class="col-md-4 col-sm-4 col-lg-4">
@@ -121,45 +160,54 @@
                                                 {{-- <h6 class="text-uppercase fs-13">Skills</h6> --}}
 
                                                 <div class="d-flex flex-wrap gap-2"> 
-                                                    {{-- @if(!is_array($adviser['specs']))
-                                                        @foreach($adviser['specs'] as $specialty)
-                                                        <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">{{ $specialty['name'] }}</span>
-                                                        <span>{{ $specialty['name'] }}, </span>
-                                                        @endforeach
-                                                    @else
-                                                        Null
-                                                    @endif --}}
-                                                    {{-- <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">User Interface</span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">User Experience</span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">Interaction Design </span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">3D Design</span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">Information Architecture</span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">User Research</span>
-                                                    <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">Wireframing</span> --}}
+                                                   
                                                 </div>
+
+                                                @if(!is_array($adviser['specs']))
+                                                @foreach($adviser['specs'] as $specialty)
+                                                    <div class="row align-items-center g-0">
+                                                        <div class="col-sm-3">
+                                                            <p class="text-truncate mt-1 mb-0"><i class="mdi mdi-circle-medium text-primary me-2"></i> {{ $specialty['name'] }} </p>
+                                                        </div>
+                                    
+                                                        <div class="col-sm-9">
+                                                            <div class="progress mt-1" style="height: 8px;">
+                                                                <div class="progress-bar progress-bar bg-primary rounded" role="progressbar" style="width: 72%" aria-valuenow="52" aria-valuemin="0" aria-valuemax="52">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{-- <span class="badge bg-dark-subtle px-3 py-2 fw-semibold">{{ $specialty['name'] }}</span> --}}
+                                                @endforeach
+                                            @else
+                                                Null
+                                            @endif
+
+
+                                               
 
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-6 col-md-6 mb-0">
+                                        <div class="col-md-12 col-sm-12 col-md-12 mb-0">
                                             <div class="">
-                                                <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Projects</h5>
+                                                <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Sessions</h5>
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="card border">
                                                         <div class="card-body">
-                                                            <h4 class="m-0 fw-semibold text-dark fs-16">Website Developing</h4>
+                                                            <h4 class="m-0 fw-semibold text-dark fs-16">15 Minutes Session</h4>
                                                             <div class="row mt-2 d-flex align-items-center">
                                                                 <div class="col">
-                                                                    <h5 class="fs-20 mt-1 fw-bold">$12,000</h5> 
+                                                                    <h5 class="fs-20 mt-1 fw-bold">${{$adviser->_15_min}}</h5> 
                                                                     <p class="mb-0 text-muted">Total Budget</p>
                                                                 </div>
                                                                 <div class="col-auto">
-                                                                    <a href="#" class="btn btn-sm btn-outline-dark px-3">More Details</a>
+                                                                    <a href="{{ url('book/session/'.$adviser->unique_id.'/15') }}" class="btn btn-sm btn-outline-dark px-3">Book Session</a>
                                                                 </div>
                                                             </div>
                                                         </div><!--end card-body-->
@@ -169,10 +217,10 @@
                                                 <div class="col-6">
                                                     <div class="card border">
                                                         <div class="card-body">
-                                                            <h4 class="m-0 fw-semibold text-dark fs-16">Algorithm Developing</h4>
+                                                            <h4 class="m-0 fw-semibold text-dark fs-16">30 Minutes Session</h4>
                                                             <div class="row mt-2 d-flex align-items-center">
                                                                 <div class="col">
-                                                                    <h5 class="fs-20 mt-1 fw-bold">$35,800</h5> 
+                                                                    <h5 class="fs-20 mt-1 fw-bold">${{$adviser->_30_min}}</h5> 
                                                                     <p class="mb-0 text-muted">Total Budget</p>
                                                                 </div>
                                                                 <div class="col-auto">
@@ -186,10 +234,10 @@
                                                 <div class="col-6">
                                                     <div class="card border mb-0">
                                                         <div class="card-body ">
-                                                            <h4 class="m-0 fw-semibold text-dark fs-16">Digital Marketing</h4>
+                                                            <h4 class="m-0 fw-semibold text-dark fs-16">1 Hour Session</h4>
                                                             <div class="row mt-2 d-flex align-items-center">
                                                                 <div class="col">
-                                                                    <h5 class="fs-20 mt-1 fw-bold">$8,000</h5> 
+                                                                    <h5 class="fs-20 mt-1 fw-bold">${{$adviser->_1_hour}}</h5> 
                                                                     <p class="mb-0 text-muted">Total Budget</p>
                                                                 </div>
                                                                 <div class="col-auto">
@@ -203,10 +251,10 @@
                                                 <div class="col-6">
                                                     <div class="card border mb-0">
                                                         <div class="card-body">
-                                                            <h4 class="m-0 fw-semibold text-dark fs-16">Mobile Developing</h4>
+                                                            <h4 class="m-0 fw-semibold text-dark fs-16">2 hours Session</h4>
                                                             <div class="row mt-2 d-flex align-items-center">
                                                                 <div class="col">
-                                                                    <h5 class="fs-20 mt-1 fw-bold">$16,000</h5>
+                                                                    <h5 class="fs-20 mt-1 fw-bold">${{$adviser->_2_hour}}</h5>
                                                                     <p class="mb-0 text-muted">Total Budget</p>
                                                                 </div>
                                                                 <div class="col-auto align-content-end">
@@ -219,7 +267,7 @@
                                             </div>
                                         </div><!-- end project -->
 
-                                        <div class="col-md-6 col-sm-6 col-md-6 mb-0">
+                                        {{-- <div class="col-md-6 col-sm-6 col-md-6 mb-0">
                                             <div class="">
                                                 <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Expertise</h5>
                                             </div>
@@ -297,7 +345,8 @@
                                                 </div>
                                             </div>
 
-                                        </div><!-- end skill -->
+                                        </div> --}}
+                                        <!-- end skill -->
                                     </div>
 
                                 </div><!-- end Experience -->

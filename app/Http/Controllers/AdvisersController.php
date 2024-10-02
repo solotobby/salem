@@ -13,9 +13,8 @@ use Illuminate\Support\Str;
 class AdvisersController extends Controller
 {
     public function show($id){
-        // with('specs:id,name')
-         $adviserInfo = Adviser::where('unique_id', $id)->get();
-        return view('advisers.show', compact('adviserInfo'));
+         $adviserInfo = Adviser::with('specs:id,name')->where('unique_id', $id)->first();
+        return view('advisers.show', ['adviser' => $adviserInfo]);
     }
 
     public function create(){

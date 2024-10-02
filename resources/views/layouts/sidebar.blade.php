@@ -51,6 +51,13 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ route('setup.booking') }}">
+                <i data-feather="globe"></i>
+                <span> Create Availability </span>
+            </a>
+        </li>
+
         {{-- <li class="menu-title">Pages</li>
 
         <li>
